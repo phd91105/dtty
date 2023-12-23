@@ -4,8 +4,8 @@ import { ExceptionHandler } from "./interfaces/exception-handler.interface";
 
 export function findBestHandler(
   err: Error,
-  endpointExceptionHandlers: constructor<ExceptionHandler>[],
-  controllerExceptionHandlers: constructor<ExceptionHandler>[],
+  endpointExceptionHandlers: constructor<ExceptionHandler>[] = [],
+  controllerExceptionHandlers: constructor<ExceptionHandler>[] = [],
 ): constructor<ExceptionHandler> {
   const errorConstructor = err.constructor as constructor<Error>;
   const matchingEndpointHandler = endpointExceptionHandlers.find((handler) =>

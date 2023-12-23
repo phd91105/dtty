@@ -1,5 +1,5 @@
 import { plainToInstance } from "class-transformer";
-import { RouteHandler } from "itty-router";
+import { RouteHandler } from "itty-router/Router";
 import { BODY_TYPE, ControllerMethod } from "../constants";
 import { DttyRequest } from "../types";
 
@@ -11,9 +11,8 @@ export const transformerMiddlewareFactory =
       req.method.toLowerCase() === ControllerMethod.delete
     )
       return;
-    const body = await req.json();
 
     const Constructor =
       Reflect.getMetadata(BODY_TYPE, endpointHandler) || Object;
-    req._internalTransformedBody = plainToInstance(Constructor, body);
+    req._internalTransformedBody = plainToInstance(Constructor, req.rawBody);
   };

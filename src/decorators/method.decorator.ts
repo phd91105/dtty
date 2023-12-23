@@ -1,5 +1,13 @@
-import { CONTROLLER_ENDPOINTS_META, ControllerMethod } from "../constants";
-import { ControllerEndpointMetadata } from "../types";
+import {
+  CONTROLLER_ENDPOINTS_META,
+  ControllerMethod,
+  GATEWAY_ENDPOINTS_META,
+  WebSocketGatewayMethod,
+} from "../constants";
+import {
+  ControllerEndpointMetadata,
+  WebSocketGatewayEndpointMetadata,
+} from "../types";
 
 const methodDecorator =
   ({
@@ -26,14 +34,48 @@ const methodDecorator =
     }
   };
 
-export const Delete = (path: string): MethodDecorator =>
+const gatewayMessageDecorator =
+  ({
+    method,
+    message,
+  }: Omit<WebSocketGatewayEndpointMetadata, "propertyKey">): MethodDecorator =>
+  (target, propertyKey) => {
+    if (Reflect.hasMetadata(GATEWAY_ENDPOINTS_META, target.constructor)) {
+      const existing: WebSocketGatewayEndpointMetadata[] = Reflect.getMetadata(
+        CONTROLLER_ENDPOINTS_META,
+        target.constructor,
+      );
+      Reflect.defineMetadata(
+        GATEWAY_ENDPOINTS_META,
+        existing.concat({ method, message, propertyKey }),
+        target.constructor,
+      );
+    } else {
+      Reflect.defineMetadata(
+        GATEWAY_ENDPOINTS_META,
+        [{ method, message, propertyKey }],
+        target.constructor,
+      );
+    }
+  };
+
+export const Delete = (path = "/"): MethodDecorator =>
   methodDecorator({ path, method: ControllerMethod.delete });
 
-export const Get = (path: string): MethodDecorator =>
+export const Get = (path = "/"): MethodDecorator =>
   methodDecorator({ path, method: ControllerMethod.get });
 
-export const Post = (path: string): MethodDecorator =>
+export const Post = (path = "/"): MethodDecorator =>
   methodDecorator({ path, method: ControllerMethod.post });
 
-export const Put = (path: string): MethodDecorator =>
+export const Patch = (path = "/"): MethodDecorator =>
+  methodDecorator({ path, method: ControllerMethod.patch });
+
+export const Put = (path = "/"): MethodDecorator =>
   methodDecorator({ path, method: ControllerMethod.put });
+
+export const SubscribeMessage = (message: string): MethodDecorator =>
+  gatewayMessageDecorator({
+    message,
+    method: WebSocketGatewayMethod.subscribeMessage,
+  });

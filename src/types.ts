@@ -1,6 +1,10 @@
-import { IRequest } from "itty-router";
+import type { IRequest } from "itty-router/Router";
 import { constructor } from "tsyringe/dist/typings/types";
-import { ControllerMethod, ControllerParams } from "./constants";
+import {
+  ControllerMethod,
+  ControllerParams,
+  WebSocketGatewayMethod,
+} from "./constants";
 import { DttyTransformer } from "./interfaces/transformer.interface";
 
 export interface ControllerEndpointMetadata {
@@ -9,8 +13,15 @@ export interface ControllerEndpointMetadata {
   method: ControllerMethod;
 }
 
+export interface WebSocketGatewayEndpointMetadata {
+  message: string;
+  propertyKey: string | symbol;
+  method: WebSocketGatewayMethod;
+}
+
 export type DttyRequest = IRequest &
   Request & {
+    rawBody: any;
     _internalTransformedBody: any;
   };
 

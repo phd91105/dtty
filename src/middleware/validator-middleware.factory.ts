@@ -1,5 +1,5 @@
 import { validate } from "class-validator";
-import { RouteHandler } from "itty-router";
+import { RouteHandler } from "itty-router/Router";
 import { ControllerMethod } from "../constants";
 import { ValidationException } from "../exceptions/validation.exception";
 import { DttyRequest } from "../types";
